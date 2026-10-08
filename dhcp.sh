@@ -8,7 +8,7 @@ NETMASK="255.255.255.0"
 NETWORK="192.168.0.0"
 BROADCAST="192.168.0.255"
 FIREWALL_IP="192.168.0.1"
-DNS_IP="8.8.8.8"
+DNS_IP="192.168.0.3"
 RANGE_START="192.168.0.100"
 RANGE_END="192.168.0.200"
 
@@ -78,6 +78,12 @@ sed -i "s/^INTERFACESv4=.*/INTERFACESv4=\"${IF_LAN}\"/" "$DHCP_DEFAULT"
 
 
 # 4. Aplicando configurações
+
+read -r -p "Troque a placa virtual de NAT para Internal Network. A placa já foi trocada? [s/N] " RESPOSTA
+if [[ ! "$RESPOSTA" =~ ^[sS]$ ]]; then
+    echo "Operação cancelada. A rede não foi reiniciada."
+    exit 1
+fi
 
 echo "==> Reiniciando serviço de rede..."
 systemctl restart networking.service

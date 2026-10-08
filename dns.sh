@@ -144,6 +144,12 @@ chown root:bind "$ZONE_FILE" "$REVERSE_ZONE_FILE"
 chmod 640 "$ZONE_FILE" "$REVERSE_ZONE_FILE"
 
 # 8. Aplicando configurações
+read -r -p "Troque a placa virtual de NAT para Internal Network. A placa já foi trocada? [s/N] " RESPOSTA
+if [[ ! "$RESPOSTA" =~ ^[sS]$ ]]; then
+    echo "Operação cancelada. A rede não foi reiniciada."
+    exit 1
+fi
+
 echo "==> Reiniciando serviço de rede..."
 systemctl restart networking.service
 echo "==> Validando configuração do BIND9..."

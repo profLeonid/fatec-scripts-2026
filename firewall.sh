@@ -57,8 +57,9 @@ systemctl restart networking.service
 
 echo "==> Habilitando IP forwarding..."
 sed -i '/^net.ipv4.ip_forward/d' /etc/sysctl.conf
-echo "net.ipv4.ip_forward=1" >> /etc/sysctl.conf
-sysctl -p
+echo "net.ipv4.ip_forward=1" > /etc/sysctl.d/99-ip-forward.conf
+sysctl --system >/dev/null
+systemctl enable networking.service
 
 
 # 6. NAT / compartilhamento via iptables
@@ -78,8 +79,9 @@ iptables -A FORWARD -i "$IF_LAN" -o "$IF_WAN" -j ACCEPT
 echo "==> Salvando regras do iptables..."
 mkdir -p /etc/iptables
 iptables-save > /etc/iptables/rules.v4
+netfilter-persistent save
 echo "==> Habilitando persistência das regras..."
-systemctl enable netfilter-persistent >/dev/null 2>&1 || true
+systemctl enable netfilter-persistent
 
 # Resumo
 
